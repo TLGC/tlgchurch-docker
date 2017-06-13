@@ -44,6 +44,7 @@ services:
   postgres:
     restart: always
     image: postgres:9.6.2
+    container_name: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
     expose:
