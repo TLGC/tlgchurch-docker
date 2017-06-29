@@ -1,0 +1,11 @@
+SECRET_KEY='k#&l2iguok!-a+7cl!^yqo$(hkbvuw+olz5mz1ptgotlcp_^7u'
+DB_NAME=tlgcdatabase
+DB_USER=tlgcdbuser
+DB_PASS=EqualisedPowerFuse
+DB_SERVICE=postgres
+DB_PORT=5432
+VIRTUAL_HOST=192.168.99.100
+VIRTUAL_NETWORK=nginx-proxy
+VIRTUAL_PORT=8000
+LETSENCRYPT_HOST=192.168.99.100
+LETSENCRYPT_EMAIL=tlgcweb@gmail.com

@@ -22,6 +22,7 @@ DB_PASS=DatabaseUserPassword
 DB_SERVICE=postgres
 DB_PORT=5432
 ```
+```5434``` is the default port for postgresql
 
 Where ```SECRET_KEY``` is simply just a random string characters - it can be as random and as long as you wish.
 
