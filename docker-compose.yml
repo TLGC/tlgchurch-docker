@@ -1,45 +1,81 @@
-version: "3"
+version: "2"
 services:
-  web:
-    restart: always
-    build: ./web
-    expose:
-      - "8000"
-    links:
-      - postgres:postgres
-      - redis:redis
-    volumes:
-      - ./web:/usr/src/app
-    env_file: .env
-    command: /usr/local/bin/gunicorn tlgc.wsgi:application -w 2 -b :8000
 
   nginx:
     restart: always
-    build: ./nginx/
+    image: jwilder/nginx-proxy
+    container_name: nginx
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./web/static:/www/static
-      - ./nginx/sites-enabled:/etc/nginx/sites-enabled
-    links:
-      - web:web
+      - "nginx-conf:/etc/nginx/conf.d"
+      - "nginx-vhost:/etc/nginx/vhost.d"
+      - "nginx-diffie-hellman-parameter:/etc/nginx/dhparam"
+      - "letsencrypt-challenges:/usr/share/nginx/html"
+      - "letsencrypt-certs:/etc/nginx/certs:ro"
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+    environment:
+      - HTTPS_METHOD=nohttp
+    labels:
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy=true"
+
+  nginx-gen:
+    restart: always
+    image: jwilder/docker-gen
+    container_name: nginx-gen
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "letsencrypt-templates:/etc/docker-gen/templates:ro"
+      - "nginx-diffie-hellman-parameter:/etc/nginx/dhparam"
+    entrypoint: /usr/local/bin/docker-gen -notify-sighup nginx -watch -wait 5s:30s /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
+    volumes_from:
+      - nginx
+
+  letsencrypt-nginx-proxy-companion:
+    restart: always
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt-nginx-proxy-companion
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "letsencrypt-certs:/etc/nginx/certs:rw"
+      - "nginx-diffie-hellman-parameter:/etc/nginx/dhparam"
+    environment:
+      - NGINX_DOCKER_GEN_CONTAINER=nginx-gen
+      - ACME_CA_URI=https://acme-staging.api.letsencrypt.org/directory
+    volumes_from:
+      - nginx
 
   postgres:
     restart: always
     image: postgres:9.6.2
+    container_name: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
+    environment:
+      - VIRTUAL_PORT=5432
 
-  redis:
+  web:
     restart: always
-    image: redis:latest
-    ports:
-      - "6379:6379"
+    build: ./web
+    container_name: web
+    expose:
+      - "8000"
     volumes:
-      - redis-data:/data
+      - "nginx-conf:/etc/nginx/conf.d"
+      - ./web:/usr/src/app
+    links:
+      - postgres:postgres
+    env_file: .dev
+    command: /usr/local/bin/gunicorn tlgc.wsgi:application -w 2 -b :8000
 
 volumes:
-  redis-data:
+  nginx-conf:
+  nginx-vhost:
+  letsencrypt-challenges:
+  letsencrypt-templates:
+  letsencrypt-certs:
+  nginx-diffie-hellman-parameter:
   postgres-data:
