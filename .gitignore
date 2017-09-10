@@ -38,6 +38,7 @@ Icon
 
 env
 .env
+.dev
 *.pyc
 .idea
 .DS_Store
