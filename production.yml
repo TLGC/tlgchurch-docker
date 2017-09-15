@@ -3,7 +3,7 @@ services:
 
   nginx:
     restart: always
-    image: jwilder/nginx-proxy
+    image: nginx
     container_name: nginx
     ports:
       - "80:80"
