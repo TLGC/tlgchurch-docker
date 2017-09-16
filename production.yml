@@ -67,41 +67,6 @@ services:
     env_file: .env
     command: /usr/local/bin/gunicorn tlgc.wsgi:application -w 2 -b :8000
 
-  mariadb:
-    restart: always
-    image: mariadb
-    container_name: mariadb
-    expose:
-      - "3306"
-    volumes:
-      - "nginx-conf:/etc/nginx/conf.d"
-      - "mariadb:/var/lib/mysql"
-    environment:
-      - MYSQL_ROOT_PASSWORD=YokeStripeGolfer2974
-      - MYSQL_DATABASE=tlgcblog
-      - MYSQL_USER=tlgcmariadbuser
-      - MYSQL_PASSWORD=OpticalIllusion24
-
-  blog:
-    restart: always
-    image: wordpress:latest
-    container_name: blog
-    expose:
-      - "8002"
-    volumes:
-      - "nginx-conf:/etc/nginx/conf.d"
-      - "wordpress:/var/www/html"
-    depends_on:
-      - mariadb
-    environment:
-      - WORDPRESS_DB_HOST=mariadb:3306
-      - WORDPRESS_DB_NAME=tlgcblog
-      - WORDPRESS_DB_USER=tlgcmariadbuser
-      - WORDPRESS_DB_PASSWORD=OpticalIllusion24
-      - VIRTUAL_HOST=blog.tlg-church.com
-      - LETSENCRYPT_HOST=tlg-church.com,www.tlg-church.com,mail.tlg-church.com,about.tlg-church.com,admin.tlg-church.com,announcement.tlg-church.com,app.tlg-church.com,blog.tlg-church.com,church.tlg-church.com,churches.tlg-church.com,contact.tlg-church.com,contribute.tlg-church.com,donate.tlg-church.com,m.tlg-church.com,mobile.tlg-church.com,news.tlg-church.com,people.tlg-church.com,satellites.tlg-church.com,newsletter.tlg-church.com,whichword.tlg-church.com,whatintheword.tlg-church.com,verses.tlg-church.com,status.tlg-church.com,camp.tlg-church.com,register.tlg-church.com,login.tlg-church.com,develop.tlg-church.com,git.tlg-church.com,portainer.tlg-church.com
-      - LETSENCRYPT_EMAIL=tlgcweb@gmail.com
-
 volumes:
   nginx-conf:
   nginx-vhost:
