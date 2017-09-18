@@ -64,6 +64,7 @@ services:
       - "8000"
     volumes:
       - nginx-conf:/etc/nginx/conf.d
+      - ./web:/usr/src/app
     env_file: .dev
     command: /usr/local/bin/gunicorn tlgc.wsgi:application -w 2 -b :8000
 
