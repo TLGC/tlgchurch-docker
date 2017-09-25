@@ -137,6 +137,7 @@ INSTALLED_APPS = (
     'cmsplugin_filer_image',
     'cmsplugin_filer_utils',
     'aldryn_style',
+    'aldryn_bootstrap3',
     'djangocms_snippet',
     'djangocms_googlemap',
     'djangocms_video',

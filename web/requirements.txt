@@ -33,3 +33,4 @@ tzlocal==1.4
 Unidecode==0.4.20
 gunicorn==19.7.1
 psycopg2==2.7.1
+aldryn-bootstrap3
